@@ -63,7 +63,7 @@ module ArLazyPreload
       # help of the TemporaryPreloadConfig
       def preload_records(association_name, records)
         TemporaryPreloadConfig.within_context do
-          preloader.preload(records, association_name)
+          ActiveRecord::Associations::Preloader.new(records: records, associations: association_name).call
         end
       end
 
@@ -73,10 +73,6 @@ module ArLazyPreload
 
       def loaded_association_names
         @loaded_association_names ||= Set.new
-      end
-
-      def preloader
-        @preloader ||= ActiveRecord::Associations::Preloader.new
       end
 
       def preloadable_record?(association_name, record)
